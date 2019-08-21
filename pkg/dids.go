@@ -1,4 +1,4 @@
-// +build !nacl,!amd64p32
+// +build linux,windows,posix,freebsd,darwin,aix,arm_linux,netbsd,openbsd,plan9,solaris
 
 package pkg
 
