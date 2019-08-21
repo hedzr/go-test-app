@@ -2,13 +2,19 @@
 
 
 
+`go-test-app` is a demo lib for running under [nacl](https://developer.chrome.com/native-client) and [go playground](https://play.golang.org/).
+
+To run our live demo:
+
+https://play.golang.org/p/34lRSAxFeUD
+
 
 
 ## about go playground
 
 
 
-https://go.googlesource.com/playground
+golang playground source codes: https://go.googlesource.com/playground
 
 
 
