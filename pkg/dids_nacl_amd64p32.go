@@ -1,7 +1,11 @@
-// +build nacl,amd64p32
+// +build nacl
 
 package pkg
 
 func TestNacl() string {
   return "nacl"
 }
+
+// see also:
+//  /
+//
