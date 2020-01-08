@@ -1,0 +1,46 @@
+
+# for cmdr option store and keyPathPrefix = "server.deps.mq", we can load kafka config by:
+#
+#
+#    enabled := cmdr.GetBoolRP(keyPathPrefix, "enabled")
+#    if !enabled {
+#      return
+#    }
+#
+#    src := cmdr.GetStringRP(keyPathPrefix, "source")
+#    if src != "kafka" {
+#      return
+#    }
+#
+#    keyPath := fmt.Sprintf("%s.%s", keyPathPrefix, src)
+#    s.kafkaConfig = new(appKafkaConfig)
+#    if err = vxconf.LoadSectionTo(vxconf.RunMode(), keyPath, &s.kafkaConfig); err != nil {
+#      return
+#    }
+#
+# vxconf.RunMode() returns 'devel' or 'prod'
+#
+app:
+  server:
+    deps:
+      mq:
+        enabled: true
+        source: kafka
+        kafka:
+          devel:
+            version: 2.3.0
+            brokers: [kafka.ops.local:9092]
+            group: example
+            topics: [trace,default-topic]
+            oldest: true    # Kafka consumer consume initial ofset from oldest
+            key: key        # sending key (producer message)
+          prod:
+            version: 2.3.0
+            brokers: [10.0.0.95:9092]
+            group: example
+            topics: [trace,default-topic]
+            oldest: true    # Kafka consumer consume initial ofset from oldest
+            key: key        # sending key (producer message)
+
+
+runmode: devel
