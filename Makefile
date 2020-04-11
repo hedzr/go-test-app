@@ -100,6 +100,15 @@ CN = hedzr/$(N)
 .PHONY: godoc format fmt lint cov gocov coverage codecov cyclo bench
 
 
+# For the full list of GOARCH/GOOS, take a look at:
+#  https://github.com/golang/go/blob/master/src/go/build/syslist.go
+#
+# A snapshot is:
+#  const goosList = "aix android darwin dragonfly freebsd hurd illumos js linux nacl netbsd openbsd plan9 solaris windows zos "
+#  const goarchList = "386 amd64 amd64p32 arm armbe arm64 arm64be ppc64 ppc64le mips mipsle mips64 mips64le mips64p32 mips64p32le ppc riscv riscv64 s390 s390x sparc sparc64 wasm "
+#©
+
+
 ## build: Compile the binary. Synonym of `compile`
 build: compile
 
@@ -107,15 +116,13 @@ build: compile
 build-linux:
 	@echo "  >  Building linux binary..."
 	@echo "  >  LDFLAGS = $(LDFLAGS)"
-	$(foreach an, fluent demo ffdemo short wget-demo, \
 	$(foreach os, linux, \
-	  echo "     Building $(GOBIN)/$(an)_$(os)_$(goarch)...$(os)"; \
+	  echo "     Building $(GOBIN)/$(APPNAME)_$(os)_$(goarch)...$(os)"; \
 	    GOARCH="$(goarch)" GOOS="$(os)" \
 	    GOPATH="$(GOPATH)" GOBIN="$(GOBIN)" GO111MODULE="$(GO111MODULE)" GOPROXY="$(GOPROXY)" \
-	      go build -ldflags "$(LDFLAGS) -X '$(W_PKG).AppName=$(an)'" -o $(GOBIN)/$(an)_$(os)_$(goarch) $(GOBASE)/examples/$(an)/main.go; \
-	    chmod +x $(GOBIN)/$(an)_$(os)_$(goarch); \
-	    ls -la $(LS_OPT) $(GOBIN)/$(an)_$(os)_$(goarch); \
-	) \
+	      go build -ldflags "$(LDFLAGS) -X '$(W_PKG).AppName=$(APPNAME)'" -o $(GOBIN)/$(APPNAME)_$(os)_$(goarch) $(GOBASE)/cli/; \
+	    chmod +x $(GOBIN)/$(APPNAME)_$(os)_$(goarch); \
+	    ls -la $(LS_OPT) $(GOBIN)/$(APPNAME)_$(os)_$(goarch); \
 	)
 	#@ls -la $(LS_OPT) $(GOBIN)/*linux*
 
@@ -123,16 +130,13 @@ build-linux:
 build-nacl:
 	@echo "  >  Building linux binary..."
 	@echo "  >  LDFLAGS = $(LDFLAGS)"
-	$(foreach an, short ffdemo, \
+	# unsupported GOOS/GOARCH pair nacl/386
 	$(foreach os, nacl, \
-	$(foreach goarch, 386 amd64p32 arm, \
-	  echo "     >> Building $(GOBIN)/$(an)_$(os)_$(goarch)...$(os)"; \
+	$(foreach goarch, amd64p32, \
+	  echo "     >> Building $(GOBIN)/$(APPNAME)_$(os)_$(goarch)...$(os)" >/dev/null; \
 	    GOARCH="$(goarch)" GOOS="$(os)" \
 	    GOPATH="$(GOPATH)" GOBIN="$(GOBIN)" GO111MODULE="$(GO111MODULE)" GOPROXY="$(GOPROXY)" \
-	      go build -ldflags "$(LDFLAGS) -X '$(W_PKG).AppName=$(an)'" -o $(GOBIN)/$(an)_$(os)_$(goarch) $(GOBASE)/examples/$(an)/main.go; \
-	    chmod +x $(GOBIN)/$(an)_$(os)_$(goarch); \
-	    ls -la $(LS_OPT) $(GOBIN)/$(an)_$(os)_$(goarch); \
-	) \
+	      go build -ldflags "$(LDFLAGS) -X '$(W_PKG).AppName=$(APPNAME)'" -o $(GOBIN)/$(APPNAME)_$(os)_$(goarch) $(GOBASE)/cli; \
 	) \
 	)
 	#@ls -la $(LS_OPT) $(GOBIN)/*linux*
@@ -141,13 +145,13 @@ build-nacl:
 build-ci:
 	@echo "  >  Building binaries in CI flow..."
 	@echo "  >  LDFLAGS = $(LDFLAGS)"
-	$(foreach an, fluent ffdemo demo short wget-demo, \
+	$(foreach an, $(APPNAME), \
 	  echo "  >  APPNAME = $(APPNAME)|$(an)"; \
 	  $(foreach os, darwin linux windows, \
 	    echo "     Building $(GOBIN)/$(an)_$(os)_$(goarch)...$(os)"; \
 	      GOARCH="$(goarch)" GOOS="$(os)" \
 	      GOPATH="$(GOPATH)" GOBIN="$(GOBIN)" GO111MODULE="$(GO111MODULE)" GOPROXY="$(GOPROXY)" \
-	        go build -ldflags "$(LDFLAGS) -X '$(W_PKG).AppName=$(an)'" -o $(GOBIN)/$(an)_$(os)_$(goarch) $(GOBASE)/examples/$(an)/main.go; \
+	        go build -ldflags "$(LDFLAGS) -X '$(W_PKG).AppName=$(an)'" -o $(GOBIN)/$(an)_$(os)_$(goarch) $(GOBASE)/cli; \
 	        gzip -f $(GOBIN)/$(an)_$(os)_$(goarch); \
 	  ) \
 	)
@@ -186,10 +190,10 @@ run:
 go-build:
 	@echo "  >  Building binary '$(GOBIN)/$(APPNAME)'..."
 	# demo short wget-demo 
-	$(foreach an, fluent ffdemo demo issue2, \
+	$(foreach an, $(APPNAME), \
 	  echo "  >  +race. APPNAME = $(APPNAME)|$(an), LDFLAGS = $(LDFLAGS)"; \
 	  GOPATH=$(GOPATH) GOBIN=$(GOBIN) GO111MODULE=$(GO111MODULE) GOPROXY=$(GOPROXY) \
-	    go build -v -race -ldflags "$(LDFLAGS) -X '$(W_PKG).AppName=$(an)'" -o $(GOBIN)/$(an) $(GOBASE)/examples/$(an)/main.go; \
+	    go build -v -race -ldflags "$(LDFLAGS) -X '$(W_PKG).AppName=$(an)'" -o $(GOBIN)/$(an) $(GOBASE)/cli; \
 	  ls -la $(LS_OPT) $(GOBIN)/$(an); \
 	)
 	ls -la $(LS_OPT) $(GOBIN)/
@@ -327,6 +331,11 @@ bench:
 	# todo: go install golang.org/x/perf/cmd/benchstat
 
 
+
+## rshz: rsync to my TP470P
+rshz:
+	@echo "  >  sync to hz-pc ..."
+	rsync -arztopg --delete $(GOBASE) hz-pc:$(HZ_PC_GOBASE)/src/github.com/hedzr/
 
 
 .PHONY: printvars info help all
