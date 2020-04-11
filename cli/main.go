@@ -4,6 +4,6 @@ package main
 
 import "github.com/hedzr/go-test-app/cli/cmd"
 
-func main(){
+func main() {
 	cmd.Entry()
 }
