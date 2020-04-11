@@ -7,12 +7,12 @@ package vxconf
 import (
 	"flag"
 	"fmt"
-	"github.com/hedzr/errors"
 	"strconv"
 	"strings"
+	"sync"
 	"syscall"
 
-	"sync"
+	"gopkg.in/hedzr/errors.v2"
 )
 
 type KVStore map[string]string

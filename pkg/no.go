@@ -4,6 +4,6 @@
 
 package pkg
 
-func clearAll(){
+func clearAll() {
 	// runtime.GOOS
 }
