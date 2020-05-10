@@ -12,12 +12,12 @@ VERSION=$(shell grep -E "Version[ \t]+=[ \t]+" doc.go|grep -Eo "[0-9.]+")
 
 # Go related variables.
 GOBASE = $(shell pwd)
-##GOPATH="$(GOBASE)/vendor:$(GOBASE)"
-##GOPATH=$(GOBASE)/vendor:$(GOBASE):$(shell dirname $(GOBASE))
-GOPATH2= $(shell dirname $(GOBASE))
-GOPATH1= $(shell dirname $(GOPATH2))
-GOPATH0= $(shell dirname $(GOPATH1))
-GOPATH_= $(shell dirname $(GOPATH0))
+#,#GOPATH="$(GOBASE)/vendor:$(GOBASE)"
+#,#GOPATH=$(GOBASE)/vendor:$(GOBASE):$(shell dirname $(GOBASE))
+#GOPATH2= $(shell dirname $(GOBASE))
+#GOPATH1= $(shell dirname $(GOPATH2))
+#GOPATH0= $(shell dirname $(GOPATH1))
+#GOPATH = $(shell dirname $(GOPATH0))
 GOBIN  = $(GOBASE)/bin
 GOFILES= $(wildcard *.go)
 BIN    = $(GOPATH)/bin
@@ -45,6 +45,13 @@ SERVER_START_ARG=server run
 SERVER_STOP_ARG=server stop
 
 
+
+MAIN_APPS = fluent winsvc service
+MAIN_BUILD_PKG = ./examples/$(MAIN_APPS)
+# MAIN_APPS = .
+# MAIN_BUILD_PKG = ./cli
+
+ 
 goarch=amd64
 W_PKG=github.com/hedzr/cmdr/conf
 TIMESTAMP=$(shell date -u '+%Y-%m-%d_%I:%M:%S%p')
@@ -112,31 +119,99 @@ CN = hedzr/$(N)
 ## build: Compile the binary. Synonym of `compile`
 build: compile
 
+
+## build-win: build to windows executable, for LAN deploy manually.
+build-win:
+	@echo "  >  Building linux binary..."
+	@echo "  >  LDFLAGS = $(LDFLAGS)"
+	$(foreach an, $(MAIN_APPS), \
+	  echo "  >  APP NAMEs = appname:$(APPNAME)|projname:$(PROJECTNAME)|an:$(an)"; \
+	  $(foreach os, windows, \
+	    echo "     Building $(GOBIN)/$(an)_$(os)_$(goarch)...$(os)"; \
+	    GOARCH="$(goarch)" GOOS="$(os)" \
+	    GOPATH="$(GOPATH)" GOBIN="$(GOBIN)" GO111MODULE="$(GO111MODULE)" GOPROXY="$(GOPROXY)" \
+	        go build -ldflags "$(LDFLAGS)" -o $(GOBIN)/$(an)_$(os)_$(goarch).exe $(GOBASE)/examples/$(an); \
+	    chmod +x $(GOBIN)/$(an)_$(os)_$(goarch)*; \
+	    ls -la $(LS_OPT) $(GOBIN)/$(an)_$(os)_$(goarch)*; \
+	  ) \
+	)
+	#@ls -la $(LS_OPT) $(GOBIN)/*linux*
+
 ## build-linux: build to linux executable, for LAN deploy manually.
 build-linux:
 	@echo "  >  Building linux binary..."
 	@echo "  >  LDFLAGS = $(LDFLAGS)"
-	$(foreach os, linux, \
-	  echo "     Building $(GOBIN)/$(APPNAME)_$(os)_$(goarch)...$(os)"; \
+	$(foreach an, $(MAIN_APPS), \
+	  echo "  >  APP NAMEs = appname:$(APPNAME)|projname:$(PROJECTNAME)|an:$(an)"; \
+	  $(foreach os, linux, \
+	    echo "     Building $(GOBIN)/$(an)_$(os)_$(goarch)...$(os)"; \
 	    GOARCH="$(goarch)" GOOS="$(os)" \
 	    GOPATH="$(GOPATH)" GOBIN="$(GOBIN)" GO111MODULE="$(GO111MODULE)" GOPROXY="$(GOPROXY)" \
-	      go build -ldflags "$(LDFLAGS) -X '$(W_PKG).AppName=$(APPNAME)'" -o $(GOBIN)/$(APPNAME)_$(os)_$(goarch) $(GOBASE)/cli/; \
-	    chmod +x $(GOBIN)/$(APPNAME)_$(os)_$(goarch); \
-	    ls -la $(LS_OPT) $(GOBIN)/$(APPNAME)_$(os)_$(goarch); \
+	        go build -ldflags "$(LDFLAGS)" -o $(GOBIN)/$(an)_$(os)_$(goarch) $(GOBASE)/examples/$(an); \
+	    chmod +x $(GOBIN)/$(an)_$(os)_$(goarch)*; \
+	    ls -la $(LS_OPT) $(GOBIN)/$(an)_$(os)_$(goarch)*; \
+	  ) \
 	)
 	#@ls -la $(LS_OPT) $(GOBIN)/*linux*
 
-## build-nacl: build to linux executable, for LAN deploy manually.
+## build-nacl: build to nacl executable, for LAN deploy manually.
 build-nacl:
+	# NOTE: can't build to nacl with golang 1.14 and darwin
 	@echo "  >  Building linux binary..."
 	@echo "  >  LDFLAGS = $(LDFLAGS)"
-	# unsupported GOOS/GOARCH pair nacl/386
-	$(foreach os, nacl, \
-	$(foreach goarch, amd64p32, \
-	  echo "     >> Building $(GOBIN)/$(APPNAME)_$(os)_$(goarch)...$(os)" >/dev/null; \
+	# unsupported GOOS/GOARCH pair nacl/386 ??
+	$(foreach an, $(MAIN_APPS), \
+	  echo "  >  APP NAMEs = appname:$(APPNAME)|projname:$(PROJECTNAME)|an:$(an)"; \
+	  $(foreach os, nacl, \
+	  $(foreach goarch, 386 arm amd64p32, \
+	    echo "     >> Building $(GOBIN)/$(an)_$(os)_$(goarch)...$(os)" >/dev/null; \
 	    GOARCH="$(goarch)" GOOS="$(os)" \
 	    GOPATH="$(GOPATH)" GOBIN="$(GOBIN)" GO111MODULE="$(GO111MODULE)" GOPROXY="$(GOPROXY)" \
-	      go build -ldflags "$(LDFLAGS) -X '$(W_PKG).AppName=$(APPNAME)'" -o $(GOBIN)/$(APPNAME)_$(os)_$(goarch) $(GOBASE)/cli; \
+	      go build -ldflags "$(LDFLAGS)" -o $(GOBIN)/$(an)_$(os)_$(goarch) $(GOBASE)/examples/$(an); \
+	    chmod +x $(GOBIN)/$(an)_$(os)_$(goarch)*; \
+	    ls -la $(LS_OPT) $(GOBIN)/$(an)_$(os)_$(goarch)*; \
+	) \
+	) \
+	)
+	#  @ls -la $(LS_OPT) $(GOBIN)/*linux*
+	#  -X '$(W_PKG).AppName=$(an)'
+
+## build-plan9: build to plan9 executable, for LAN deploy manually.
+build-plan9:
+	@echo "  >  Building linux binary..."
+	@echo "  >  LDFLAGS = $(LDFLAGS)"
+	# unsupported GOOS/GOARCH pair nacl/386 ??
+	$(foreach an, $(MAIN_APPS), \
+	  echo "  >  APP NAMEs = appname:$(APPNAME)|projname:$(PROJECTNAME)|an:$(an)"; \
+	  $(foreach os, plan9, \
+	  $(foreach goarch, amd64, \
+	    echo "     >> Building $(GOBIN)/$(an)_$(os)_$(goarch)...$(os)" >/dev/null; \
+	    GOARCH="$(goarch)" GOOS="$(os)" \
+	    GOPATH="$(GOPATH)" GOBIN="$(GOBIN)" GO111MODULE="$(GO111MODULE)" GOPROXY="$(GOPROXY)" \
+	      go build -ldflags "$(LDFLAGS)" -o $(GOBIN)/$(an)_$(os)_$(goarch) $(GOBASE)/examples/$(an); \
+	    chmod +x $(GOBIN)/$(an)_$(os)_$(goarch)*; \
+	    ls -la $(LS_OPT) $(GOBIN)/$(an)_$(os)_$(goarch)*; \
+	) \
+	) \
+	)
+	#@ls -la $(LS_OPT) $(GOBIN)/*linux*
+
+## build-freebsd: build to freebsd executable, for LAN deploy manually.
+build-freebsd:
+	@echo "  >  Building linux binary..."
+	@echo "  >  LDFLAGS = $(LDFLAGS)"
+	# unsupported GOOS/GOARCH pair nacl/386 ??
+	$(foreach an, $(MAIN_APPS), \
+	  echo "  >  APP NAMEs = appname:$(APPNAME)|projname:$(PROJECTNAME)|an:$(an)"; \
+	  $(foreach os, freebsd, \
+	  $(foreach goarch, amd64, \
+	    echo "     >> Building $(GOBIN)/$(an)_$(os)_$(goarch)...$(os)" >/dev/null; \
+	    GOARCH="$(goarch)" GOOS="$(os)" \
+	    GOPATH="$(GOPATH)" GOBIN="$(GOBIN)" GO111MODULE="$(GO111MODULE)" GOPROXY="$(GOPROXY)" \
+	      go build -ldflags "$(LDFLAGS)" -o $(GOBIN)/$(an)_$(os)_$(goarch) $(GOBASE)/examples/$(an); \
+	    chmod +x $(GOBIN)/$(an)_$(os)_$(goarch)*; \
+	    ls -la $(LS_OPT) $(GOBIN)/$(an)_$(os)_$(goarch)*; \
+	) \
 	) \
 	)
 	#@ls -la $(LS_OPT) $(GOBIN)/*linux*
@@ -145,16 +220,22 @@ build-nacl:
 build-ci:
 	@echo "  >  Building binaries in CI flow..."
 	@echo "  >  LDFLAGS = $(LDFLAGS)"
-	$(foreach an, $(APPNAME), \
-	  echo "  >  APPNAME = $(APPNAME)|$(an)"; \
-	  $(foreach os, darwin linux windows, \
-	    echo "     Building $(GOBIN)/$(an)_$(os)_$(goarch)...$(os)"; \
-	      GOARCH="$(goarch)" GOOS="$(os)" \
-	      GOPATH="$(GOPATH)" GOBIN="$(GOBIN)" GO111MODULE="$(GO111MODULE)" GOPROXY="$(GOPROXY)" \
-	        go build -ldflags "$(LDFLAGS) -X '$(W_PKG).AppName=$(an)'" -o $(GOBIN)/$(an)_$(os)_$(goarch) $(GOBASE)/cli; \
-	        gzip -f $(GOBIN)/$(an)_$(os)_$(goarch); \
-	  ) \
+	$(foreach an, $(MAIN_APPS), \
+	  echo "  >  APP NAMEs = appname:$(APPNAME)|projname:$(PROJECTNAME)|an:$(an)"; \
+	  $(foreach os, linux darwin windows, \
+	  $(foreach goarch, 386 amd64, \
+	    echo "     >> Building $(GOBIN)/$(an)_$(os)_$(goarch)...$(os)" >/dev/null; \
+	    GOARCH="$(goarch)" GOOS="$(os)" \
+	    GOPATH="$(GOPATH)" GOBIN="$(GOBIN)" GO111MODULE="$(GO111MODULE)" GOPROXY="$(GOPROXY)" \
+	      go build -ldflags "$(LDFLAGS)" -o $(GOBIN)/$(an)_$(os)_$(goarch) $(GOBASE)/examples/$(an); \
+	    chmod +x $(GOBIN)/$(an)_$(os)_$(goarch); \
+	    ls -la $(LS_OPT) $(GOBIN)/$(an)_$(os)_$(goarch); \
+	    gzip -f $(GOBIN)/$(an)_$(os)_$(goarch); \
+	    ls -la $(LS_OPT) $(GOBIN)/$(an)_$(os)_$(goarch)*; \
+	) \
+	) \
 	)
+	@echo "  < All Done."
 	@ls -la $(LS_OPT) $(GOBIN)/*
 
 
@@ -185,15 +266,15 @@ clean:
 ## run: go run xxx
 run:
 	@GOPATH=$(GOPATH) GOBIN=$(GOBIN) GO111MODULE=$(GO111MODULE) GOPROXY=$(GOPROXY) \
-	go run -ldflags "$(LDFLAGS)" $(GOBASE)/cli/main.go
+	go run -ldflags "$(LDFLAGS)" $(GOBASE)/cli/main.go 
 
 go-build:
 	@echo "  >  Building binary '$(GOBIN)/$(APPNAME)'..."
 	# demo short wget-demo 
-	$(foreach an, $(APPNAME), \
+	$(foreach an, $(MAIN_APPS), \
 	  echo "  >  +race. APPNAME = $(APPNAME)|$(an), LDFLAGS = $(LDFLAGS)"; \
 	  GOPATH=$(GOPATH) GOBIN=$(GOBIN) GO111MODULE=$(GO111MODULE) GOPROXY=$(GOPROXY) \
-	    go build -v -race -ldflags "$(LDFLAGS) -X '$(W_PKG).AppName=$(an)'" -o $(GOBIN)/$(an) $(GOBASE)/cli; \
+	    go build -v -race -ldflags "$(LDFLAGS) -X '$(W_PKG).AppName=$(an)'" -o $(GOBIN)/$(an) $(GOBASE)/examples/$(an); \
 	  ls -la $(LS_OPT) $(GOBIN)/$(an); \
 	)
 	ls -la $(LS_OPT) $(GOBIN)/
@@ -201,9 +282,9 @@ go-build:
 	# chmod +x $(GOBIN)/*
 
 go-generate:
-	@echo "  >  Generating dependency files..."
+	@echo "  >  Generating dependency files ($(generate)) ..."
 	@GOPATH=$(GOPATH) GOBIN=$(GOBIN) GO111MODULE=$(GO111MODULE) GOPROXY=$(GOPROXY) \
-	go generate $(generate)
+	go generate $(generate) ./...
 	# @echo "     done"
 
 go-mod-download:
@@ -330,7 +411,16 @@ bench:
 	# go test -bench "." -run=none -test.benchtime 10s
 	# todo: go install golang.org/x/perf/cmd/benchstat
 
-
+## linux-test: call ci/linux_test/Makefile
+linux-test:
+	@echo "  >  linux-test ..."
+	@-touch $(STDERR)
+	@-rm $(STDERR)
+	@echo $(MAKE) -f ./ci/linux_test/Makefile test 2> $(STDERR)
+	@$(MAKE) -f ./ci/linux_test/Makefile test 2> $(STDERR)
+	@echo "  >  linux-test ..."
+	$(MAKE) -f ./ci/linux_test/Makefile all  2> $(STDERR)
+	@cat $(STDERR) | sed -e '1s/.*/\nError:\n/' 1>&2
 
 ## rshz: rsync to my TP470P
 rshz:
