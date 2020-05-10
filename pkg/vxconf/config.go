@@ -17,7 +17,7 @@ import (
 
 type KVStore map[string]string
 
-// Config represents a configuration with convenient access methods.
+// AppConfig represents a configuration with convenient access methods.
 type AppConfig struct {
 	// loaded from meta.yaml
 	Root interface{}
@@ -32,7 +32,6 @@ var (
 
 func New() AppConfig {
 	once.Do(func() {
-		// instance = make(Config)
 		instance = AppConfig{
 			KV: make(KVStore),
 		}

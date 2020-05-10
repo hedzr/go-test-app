@@ -5,6 +5,7 @@ package cmd
 import (
 	"fmt"
 	"github.com/hedzr/cmdr"
+	"github.com/hedzr/go-test-app/cli/cvt"
 	"github.com/hedzr/go-test-app/pkg/go112113"
 	"github.com/hedzr/logex"
 	"github.com/sirupsen/logrus"
@@ -48,8 +49,20 @@ func buildRootCmd() (rootCmd *cmdr.RootCommand) {
 	mx(root)
 	kv(root)
 	ms(root)
+	converter(root)
 
 	return
+}
+
+func converter(root cmdr.OptCmd) {
+	// converter
+
+	root.NewSubCommand("convert", "cvt", "converter").
+		Description("converters for (folder/file name)").
+		Group("Util").
+		TailPlaceholder("[folder/file name, ...]").
+		Action(cvt.Cvt)
+	
 }
 
 func soundex(root cmdr.OptCmd) {
