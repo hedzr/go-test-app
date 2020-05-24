@@ -21,7 +21,7 @@ func buildRootCmd() (rootCmd *cmdr.RootCommand) {
 	// cmdr.Root("aa", "1.0.1").
 	// 	Header("sds").
 	// 	NewSubCommand().
-	// 	Titles("ms", "microservice").
+	// 	Titles("microservice", "ms").
 	// 	Description("", "").
 	// 	Group("").
 	// 	Action(func(cmd *cmdr.Command, args []string) (err error) {
@@ -299,30 +299,12 @@ func ms(root cmdr.OptCmd) {
 	tags(msCmd)
 }
 
-func tags(msCmd cmdr.OptCmd) {
+func tags(parent cmdr.OptCmd) {
 	// ms tags
 
-	msTagsCmd := msCmd.NewSubCommand("tags", "t").
+	msTagsCmd := parent.NewSubCommand("tags", "t").
 		Description("tags operations of a micro-service", "").
 		Group("")
-
-	// cTags.NewFlag(cmdr.OptFlagTypeString).
-	// 	Titles("n", "name").
-	// 	Description("name of the service", "").
-	// 	Group("").
-	// 	DefaultValue("", "NAME")
-	//
-	// cTags.NewFlag(cmdr.OptFlagTypeString).
-	// 	Titles("i", "id").
-	// 	Description("unique id of the service", "").
-	// 	Group("").
-	// 	DefaultValue("", "ID")
-	//
-	// cTags.NewFlag(cmdr.OptFlagTypeString).
-	// 	Titles("a", "addr").
-	// 	Description("", "").
-	// 	Group("").
-	// 	DefaultValue("consul.ops.local", "ADDR")
 
 	attachConsulConnectFlags(msTagsCmd)
 
@@ -378,7 +360,7 @@ func tags(msCmd cmdr.OptCmd) {
 		Group("")
 
 	c3.NewFlag(cmdr.OptFlagTypeString).
-		Titles("n", "name").
+		Titles("name", "n").
 		Description("a string to be added.").
 		DefaultValue("", "")
 

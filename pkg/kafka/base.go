@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"github.com/Shopify/sarama"
 	"github.com/hedzr/cmdr"
-	"github.com/hedzr/go-test-app/pkg/vxconf"
+	"github.com/hedzr/cmdr-addons/pkg/vxconf"
 	"github.com/sirupsen/logrus"
 	"log"
 )
