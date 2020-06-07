@@ -16,8 +16,8 @@ go 1.12
 
 require (
 	github.com/Shopify/sarama v1.26.4
-	github.com/hedzr/cmdr v1.6.39
-	github.com/hedzr/cmdr-addons v1.0.0
+	github.com/hedzr/cmdr v1.6.47
+	github.com/hedzr/cmdr-addons v1.0.11
 	github.com/hedzr/logex v1.1.8
 	github.com/sirupsen/logrus v1.6.0
 	golang.org/x/net v0.0.0-20200520004742-59133d7f0dd7
