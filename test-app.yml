@@ -1,0 +1,169 @@
+
+app:
+
+  tcp:
+    server:
+      addr:       # host[:port]
+      # The default ports for the whole socket-lib.
+      ports:
+        default: 1883
+        tls: 8883
+        websocket: 443
+        sn: 1884   # mqttsn udp mode
+
+      tls:
+        enabled: true
+        client-auth: false
+        cacert: root.pem
+        cert: cert.pem
+        key: cert.key
+        locations:
+          - ./ci/certs
+          - $CFG_DIR/certs
+
+    client:
+      # To run the client with an interactive  mode, set interactive to true. The default is always false.
+      # interactive: true
+
+      addr:       # host[:port]
+      # The default ports for the whole socket-lib.
+      ports:
+        default: 1883
+        tls: 8883
+        websocket: 443
+        sn: 1884   # mqttsn udp mode
+
+      tls:
+        enabled: true
+        cacert: root.pem
+        server-cert: cert.pem
+        client-auth: false
+        cert: client.pem
+        key: client.key
+        locations:
+          - ./ci/certs
+          - $CFG_DIR/certs
+
+
+
+
+  test-app:
+
+    server:
+
+      # While no-sys-stats is set to false, any activities and statistics
+      # will be collected into $SYS/....
+      #
+      # For more information refer to
+      #   https://github.com/mqtt/mqtt.github.io/wiki/SYS-Topics
+      #
+      # Modifying this flag will take effect right now
+      no-sys-stats: false
+      # want print a logging after stats collected?
+      no-sys-stats-log: true
+
+      # if cmdr.InDebugging() || cmdr.GetDebugMode() {
+      debug:
+        dump-sessions: false
+        dump-subscriptions: true
+      # }
+
+      # For topic filter subscription, we support wild matching ('+', '#') by default.
+      # To disable it, uncomment the following line
+      #no-wildcard-filter: true
+
+      subs-id-avaliable: true
+      topic-alias-maxinum: 0xffff
+
+      keep-alive:
+        enabled: true
+        interval: 120s
+
+      shared-subscription: # for mqtt 5.0+
+        enabled: true
+
+      authenticator:
+        what: default
+
+      storage:
+        # what=gob:   simple storage mode for the mqtt persistent layer
+        # what=redis: cross-nodes redis cluster allows mqtt cluster, realtime persistent layer
+        what: redis
+        #runMode:
+        #runPos:
+        gob:
+          devel:
+            data-dir: /var/lib/$APPNAME/gob-data
+            saving-period: 20s
+            enabled: true
+        redis:
+          devel:     # enable this config with: `RUNMODE=devel go run ....`
+            peers: localhost:26379        # local homebrew redis server
+            # readonly-route: true        # read-write separately
+            enable-cluster: false             # for redis cluster, it must be true
+            pool-size: 10
+            subs-channels: [mqttlib.$sys.notify,mqttlib.$sys.notify.*,mqttlib.news,mqttlib.news.*,mqttlib.notify,mqttlib.notify.*]
+          devel-13:  # enable this config with: `APP_POS=13 RUNMODE=devel go run ....`
+            peers: 192.168.0.13:6379
+            user:
+            pass:
+            db:
+            dial-timeout:
+            read-timeout:
+            write-timeout:
+            # readonly-route:
+            # enable-cluster: true
+            pool-size: 30
+
+      # The default ports for the whole mqttlib.
+      ports:
+        default: 1883
+        tls: 8883
+        websocket: 443
+        sn: 1884   # mqttsn udp mode
+
+      tls:
+        enabled: true
+        client-auth: false    # true
+        cacert: root.pem      # optional for client ca cert
+        cert: server.pem      # for server cert, it MUST BE a bundle cert with all root ca cert chains
+        key: cert.key
+        locations:
+          - ./ci/certs
+          - $CFG_DIR/certs
+
+      websocket:
+        max-message-size: 32k  # 2M
+
+    client:
+
+      tls:
+        enabled: true
+        cacert: root.pem
+        server-cert: server.pem
+        client-auth: true
+        cert: client.pem
+        key: client.key
+        locations:
+          - ./ci/certs
+          - $CFG_DIR/certs
+
+      pub:
+        persist-client-id: mqtool-test-pub-client-10101
+
+
+  mqtool:
+    logger:
+      level: INFO                  # logrus based: OFF, TRACE, DEBUG, INFO, WARNING, ERROR, FATAL, PANIC
+      format: text                 # text (default), json, logfmt
+      #target: journal             # missing or 'default': "$dir/$serverName.log" will be created under daemon mode; 'journal': log to stdout and stderr, and you could send its to journal
+      #dir: /var/log/$APPNAME      # never used.
+      keep-empty-field: false      # keep the field even if its value is empty
+      timestamp:                   # auto (enabled when level >= debug), true, false.
+
+      # journal mode:
+      # log message will be print to stdout and stderr directly;
+      # and, use systemd .service configuration to journal;
+      #
+      #
+      #
