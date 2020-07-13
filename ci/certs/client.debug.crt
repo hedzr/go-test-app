@@ -1,0 +1,45 @@
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number: 4 (0x4)
+    Signature Algorithm: ecdsa-with-SHA256
+        Issuer: C=CN, ST=Chongqing, L=CQ, O=Domino Ltd., CN=Root CA
+        Validity
+            Not Before: Jul 13 02:36:29 2020 GMT
+            Not After : Jul 11 02:36:29 2030 GMT
+        Subject: C=CN, ST=Chongqing, L=CQ, O=Domino Ltd., CN=demo1
+        Subject Public Key Info:
+            Public Key Algorithm: id-ecPublicKey
+                Public-Key: (256 bit)
+                pub: 
+                    04:52:10:e4:a3:80:68:1e:6a:e3:2e:a4:22:4c:21:
+                    b7:c9:4c:5a:c5:a0:7f:75:91:fc:5e:37:31:9d:1a:
+                    e5:54:a0:da:21:16:a9:51:21:27:39:67:b7:0e:06:
+                    5b:26:dc:d6:a1:4d:59:9b:c4:fc:08:79:11:67:64:
+                    97:17:69:56:0c
+                ASN1 OID: prime256v1
+                NIST CURVE: P-256
+        X509v3 extensions:
+            X509v3 Key Usage: critical
+                Digital Signature
+            X509v3 Extended Key Usage: 
+                TLS Web Client Authentication
+            X509v3 Basic Constraints: critical
+                CA:FALSE
+    Signature Algorithm: ecdsa-with-SHA256
+         30:46:02:21:00:c6:af:43:b0:c7:95:bf:b5:27:d0:8e:06:c8:
+         66:76:f5:ba:22:ba:1d:56:e5:73:ac:f9:58:46:04:49:ba:61:
+         00:02:21:00:d1:e4:fb:63:2e:db:c7:dd:6b:88:66:1a:20:e4:
+         80:bc:5a:fd:70:ac:38:7b:15:3d:45:27:51:48:8a:cc:43:fa
+-----BEGIN CERTIFICATE-----
+MIIBzzCCAXSgAwIBAgIBBDAKBggqhkjOPQQDAjBWMQswCQYDVQQGEwJDTjESMBAG
+A1UECBMJQ2hvbmdxaW5nMQswCQYDVQQHEwJDUTEUMBIGA1UEChMLRG9taW5vIEx0
+ZC4xEDAOBgNVBAMTB1Jvb3QgQ0EwHhcNMjAwNzEzMDIzNjI5WhcNMzAwNzExMDIz
+NjI5WjBUMQswCQYDVQQGEwJDTjESMBAGA1UECBMJQ2hvbmdxaW5nMQswCQYDVQQH
+EwJDUTEUMBIGA1UEChMLRG9taW5vIEx0ZC4xDjAMBgNVBAMTBWRlbW8xMFkwEwYH
+KoZIzj0CAQYIKoZIzj0DAQcDQgAEUhDko4BoHmrjLqQiTCG3yUxaxaB/dZH8Xjcx
+nRrlVKDaIRapUSEnOWe3DgZbJtzWoU1Zm8T8CHkRZ2SXF2lWDKM1MDMwDgYDVR0P
+AQH/BAQDAgeAMBMGA1UdJQQMMAoGCCsGAQUFBwMCMAwGA1UdEwEB/wQCMAAwCgYI
+KoZIzj0EAwIDSQAwRgIhAMavQ7DHlb+1J9COBshmdvW6IrodVuVzrPlYRgRJumEA
+AiEA0eT7Yy7bx91riGYaIOSAvFr9cKw4exU9RSdRSIrMQ/o=
+-----END CERTIFICATE-----

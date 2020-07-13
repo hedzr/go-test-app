@@ -1,0 +1,49 @@
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number:
+            9f:9b:2e:de:c3:ae:ee:03:65:a0:6e:69:72:9c:fb:56
+    Signature Algorithm: ecdsa-with-SHA256
+        Issuer: C=CN, ST=Chongqing, L=CQ, O=Domino Ltd., CN=Root CA
+        Validity
+            Not Before: Jul 13 02:36:29 2020 GMT
+            Not After : Jul 11 02:36:29 2030 GMT
+        Subject: C=CN, ST=Chongqing, L=CQ, O=Domino Ltd., CN=localhost
+        Subject Public Key Info:
+            Public Key Algorithm: id-ecPublicKey
+                Public-Key: (256 bit)
+                pub: 
+                    04:f9:76:60:3b:e2:eb:21:6b:0b:14:28:34:a1:da:
+                    50:66:79:6c:23:99:ce:d2:b7:6b:3c:ee:77:be:59:
+                    25:7f:eb:62:55:9f:c5:b5:d3:26:64:0d:56:bf:f6:
+                    a9:17:38:47:2a:4c:34:e5:ea:17:27:1f:90:82:48:
+                    1a:98:ec:1b:1d
+                ASN1 OID: prime256v1
+                NIST CURVE: P-256
+        X509v3 extensions:
+            X509v3 Key Usage: critical
+                Digital Signature, Key Encipherment
+            X509v3 Extended Key Usage: 
+                TLS Web Server Authentication
+            X509v3 Basic Constraints: critical
+                CA:FALSE
+            X509v3 Subject Alternative Name: 
+                DNS:localhost
+    Signature Algorithm: ecdsa-with-SHA256
+         30:45:02:20:29:0e:9b:c5:bf:9e:07:81:10:03:76:a8:e2:9c:
+         f5:c8:5c:b6:0c:64:9d:ef:1a:ff:88:f2:b6:51:ea:29:b5:aa:
+         02:21:00:d7:13:7a:9f:ba:1b:01:3b:6e:a8:b2:03:d3:00:c8:
+         a9:94:cb:58:c4:88:4d:2e:99:b8:26:0c:c0:a7:ab:5a:69
+-----BEGIN CERTIFICATE-----
+MIIB+DCCAZ6gAwIBAgIRAJ+bLt7Dru4DZaBuaXKc+1YwCgYIKoZIzj0EAwIwVjEL
+MAkGA1UEBhMCQ04xEjAQBgNVBAgTCUNob25ncWluZzELMAkGA1UEBxMCQ1ExFDAS
+BgNVBAoTC0RvbWlubyBMdGQuMRAwDgYDVQQDEwdSb290IENBMB4XDTIwMDcxMzAy
+MzYyOVoXDTMwMDcxMTAyMzYyOVowWDELMAkGA1UEBhMCQ04xEjAQBgNVBAgTCUNo
+b25ncWluZzELMAkGA1UEBxMCQ1ExFDASBgNVBAoTC0RvbWlubyBMdGQuMRIwEAYD
+VQQDEwlsb2NhbGhvc3QwWTATBgcqhkjOPQIBBggqhkjOPQMBBwNCAAT5dmA74ush
+awsUKDSh2lBmeWwjmc7St2s87ne+WSV/62JVn8W10yZkDVa/9qkXOEcqTDTl6hcn
+H5CCSBqY7Bsdo0swSTAOBgNVHQ8BAf8EBAMCBaAwEwYDVR0lBAwwCgYIKwYBBQUH
+AwEwDAYDVR0TAQH/BAIwADAUBgNVHREEDTALgglsb2NhbGhvc3QwCgYIKoZIzj0E
+AwIDSAAwRQIgKQ6bxb+eB4EQA3ao4pz1yFy2DGSd7xr/iPK2UeoptaoCIQDXE3qf
+uhsBO26osgPTAMiplMtYxIhNLpm4JgzAp6taaQ==
+-----END CERTIFICATE-----
