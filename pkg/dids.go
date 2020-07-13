@@ -7,5 +7,5 @@ package pkg
 // amd64p32 nacl
 
 func TestNacl() string {
-  return "normal"
+	return "normal"
 }

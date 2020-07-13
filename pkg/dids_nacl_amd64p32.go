@@ -3,7 +3,7 @@
 package pkg
 
 func TestNacl() string {
-  return "nacl"
+	return "nacl"
 }
 
 // see also:
