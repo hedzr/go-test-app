@@ -4,6 +4,7 @@ package main
 
 import (
 	"github.com/hedzr/cmdr"
+	"github.com/hedzr/cmdr-addons/pkg/plugins/trace"
 	"github.com/hedzr/go-socketlib/tcp/cert"
 	"github.com/hedzr/go-socketlib/tcp/client"
 	"github.com/hedzr/go-socketlib/tcp/server"
@@ -13,6 +14,8 @@ import (
 func main() {
 	if err := cmdr.Exec(buildRootCmd(),
 		cmdr.WithLogex(cmdr.WarnLevel),
+		trace.WithTraceEnable(true),
+
 		//cmdr.WithUnknownOptionHandler(onUnknownOptionHandler),
 		//cmdr.WithUnhandledErrorHandler(onUnhandledErrorHandler),
 	); err != nil {

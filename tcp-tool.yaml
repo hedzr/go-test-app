@@ -1,0 +1,31 @@
+---
+
+#
+# Configuration file for ./cli/c2/main.go or ./cli/main.go
+#
+
+#env-prefix: ["app"]
+env-prefix:
+  - app
+
+app:
+
+  # runmode: devel  # devel, prod
+
+  logger:
+    # The field 'level' will be reset to "debug" while the app is started up within a debugger
+    # available values are:
+    #   "disable"/"off", "panic", "fatal", "error", "warn", "info", "debug", "trace"
+    level:  info
+    format: text                  # text, json, logfmt, ...
+    backend: sugar                # zap, sugar(sugared-zap) or logrus
+    target: console               # console, file
+    directory: /var/log/$APPNAME
+
+  root:
+    "1": "1"
+
+  all:
+    "1": "1"
+
+
