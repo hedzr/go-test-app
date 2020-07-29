@@ -27,7 +27,6 @@ func main() {
 
 func buildRootCmd() (rootCmd *cmdr.RootCommand) {
 	root := cmdr.Root(appName, "1.0.1").
-		// Header("fluent - test for cmdr - no version - hedzr").
 		Copyright(copyright, "hedzr").
 		Description(desc, longDesc).
 		Examples(examples)
