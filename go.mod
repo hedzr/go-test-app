@@ -27,8 +27,10 @@ require (
 	github.com/hedzr/go-socketlib v0.0.0-00010101000000-000000000000
 	github.com/hedzr/log v0.1.15
 	github.com/hedzr/logex v1.2.7
+	github.com/pkg/errors v0.9.1 // indirect
 	github.com/sirupsen/logrus v1.6.0
 	golang.org/x/net v0.0.0-20200707034311-ab3426394381
 	golang.org/x/text v0.3.3
+	golang.org/x/tools v0.0.0-20200131211209-ecb101ed6550 // indirect
 	gopkg.in/hedzr/errors.v2 v2.0.12
 )

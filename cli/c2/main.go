@@ -5,7 +5,7 @@ package main
 import (
 	"github.com/hedzr/cmdr"
 	"github.com/hedzr/cmdr-addons/pkg/plugins/trace"
-	"github.com/hedzr/go-socketlib/coaplib"
+	"github.com/hedzr/go-socketlib/coaplib/cmd"
 	"github.com/hedzr/go-socketlib/tcp/cert"
 	"github.com/hedzr/go-socketlib/tcp/client"
 	"github.com/hedzr/go-socketlib/tcp/server"
@@ -38,6 +38,14 @@ func buildRootCmd() (rootCmd *cmdr.RootCommand) {
 
 func socketLib(root cmdr.OptCmd) {
 
+	// CoAP
+
+	coapCmd := root.NewSubCommand("coap", "co").
+		Description("CoAP server/client operations...", "").
+		Group("IoT")
+
+	cmd.AttachToCmdr(coapCmd)
+
 	// TCP/UDP
 
 	tcpCmd := root.NewSubCommand("tcp", "tcp", "socket", "socketlib").
@@ -58,13 +66,6 @@ func socketLib(root cmdr.OptCmd) {
 
 	cert.AttachToCmdr(root)
 
-	// CoAP
-
-	coapCmd := root.NewSubCommand("coap", "co").
-		Description("CoAP server/client operations...", "").
-		Group("IoT")
-
-	coaplib.AttachToCmdr(coapCmd)
 }
 
 const (
