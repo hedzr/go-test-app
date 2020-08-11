@@ -20,10 +20,13 @@ go 1.12
 
 replace github.com/hedzr/go-socketlib => ../go-socketlib
 
+replace github.com/hedzr/go-coaplib => ../go-coaplib
+
 require (
 	github.com/Shopify/sarama v1.26.4
 	github.com/hedzr/cmdr v1.7.3
 	github.com/hedzr/cmdr-addons v1.1.3
+	github.com/hedzr/go-coaplib v0.0.0-00010101000000-000000000000
 	github.com/hedzr/go-socketlib v0.0.0-00010101000000-000000000000
 	github.com/hedzr/log v0.1.15
 	github.com/hedzr/logex v1.2.7

@@ -5,7 +5,7 @@ package main
 import (
 	"github.com/hedzr/cmdr"
 	"github.com/hedzr/cmdr-addons/pkg/plugins/trace"
-	"github.com/hedzr/go-socketlib/coaplib/cmd"
+	"github.com/hedzr/go-coaplib/cmd"
 	"github.com/hedzr/go-socketlib/tcp/cert"
 	"github.com/hedzr/go-socketlib/tcp/client"
 	"github.com/hedzr/go-socketlib/tcp/server"
