@@ -7,7 +7,7 @@ import (
 	"github.com/hedzr/cmdr"
 	"github.com/hedzr/cmdr/examples/demo/svr"
 	"github.com/hedzr/cmdr/plugin/daemon"
-	"github.com/sirupsen/logrus"
+	"github.com/hedzr/logex/logx/logrus"
 	"gopkg.in/hedzr/errors.v2"
 	"strings"
 )
@@ -29,16 +29,18 @@ func Entry() {
 		// cmdr.WithBuiltinCommands(false, false, false, false, false),
 		daemon.WithDaemon(svr.NewDaemon(), nil, nil, nil),
 
-		// integrate with logex library
-		cmdr.WithLogex(cmdr.DebugLevel),
-		cmdr.WithLogexPrefix("logger"),
+		cmdr.WithLogx(logrus.New("debug", false, true)),
+
+		//// integrate with logex library
+		//cmdr.WithLogex(cmdr.DebugLevel),
+		//cmdr.WithLogexPrefix("logger"),
 
 		cmdr.WithHelpTabStop(41),
 
 		cmdr.WithWatchMainConfigFileToo(true),
 		cmdr.WithNoWatchConfigFiles(false),
 		cmdr.WithOptionMergeModifying(func(keyPath string, value, oldVal interface{}) {
-			logrus.Debugf("%%-> -> %q: %v -> %v", keyPath, oldVal, value)
+			cmdr.Logger.Debugf("%%-> -> %q: %v -> %v", keyPath, oldVal, value)
 			if strings.HasSuffix(keyPath, ".mqtt.server.stats.enabled") {
 				// mqttlib.FindServer().EnableSysStats(!vxconf.ToBool(value))
 			}
@@ -56,7 +58,7 @@ func Entry() {
 		cmdr.WithOnSwitchCharHit(onSwitchCharHit),
 		cmdr.WithOnPassThruCharHit(onPassThruCharHit),
 	); err != nil {
-		logrus.Fatalf("error: %+v", err)
+		cmdr.Logger.Fatalf("error: %+v", err)
 	}
 }
 

@@ -10,18 +10,19 @@ import (
 	"github.com/hedzr/go-socketlib/tcp/client"
 	"github.com/hedzr/go-socketlib/tcp/server"
 	"github.com/hedzr/log"
-	log2 "log"
+	"github.com/hedzr/logex/logx/logrus"
 )
 
 func main() {
 	if err := cmdr.Exec(buildRootCmd(),
+		cmdr.WithLogx(logrus.New("debug", false, true)),
 		cmdr.WithLogex(cmdr.Level(log.WarnLevel)),
 		trace.WithTraceEnable(true),
 
 		//cmdr.WithUnknownOptionHandler(onUnknownOptionHandler),
 		//cmdr.WithUnhandledErrorHandler(onUnhandledErrorHandler),
 	); err != nil {
-		log2.Fatalf("error: %+v", err)
+		cmdr.Logger.Fatalf("error: %+v", err)
 	}
 }
 

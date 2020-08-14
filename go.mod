@@ -24,14 +24,15 @@ replace github.com/hedzr/go-coaplib => ../go-coaplib
 
 require (
 	github.com/Shopify/sarama v1.26.4
-	github.com/hedzr/cmdr v1.7.3
-	github.com/hedzr/cmdr-addons v1.1.3
+	github.com/hedzr/cmdr v1.7.6
+	github.com/hedzr/cmdr-addons v1.7.6
 	github.com/hedzr/go-coaplib v0.0.0-00010101000000-000000000000
 	github.com/hedzr/go-socketlib v0.0.0-00010101000000-000000000000
 	github.com/hedzr/log v0.1.15
 	github.com/hedzr/logex v1.2.7
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/sirupsen/logrus v1.6.0
+	gitlab.com/hedzr/mqttlib v1.0.5 // indirect
 	golang.org/x/net v0.0.0-20200707034311-ab3426394381
 	golang.org/x/text v0.3.3
 	golang.org/x/tools v0.0.0-20200131211209-ecb101ed6550 // indirect
