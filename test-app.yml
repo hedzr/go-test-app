@@ -14,7 +14,7 @@ app:
       tls:
         enabled: true
         client-auth: false
-        cacert: root.pem
+        ca-cert: root.pem
         cert: cert.pem
         key: cert.key
         locations:
@@ -35,7 +35,7 @@ app:
 
       tls:
         enabled: true
-        cacert: root.pem
+        ca-cert: root.pem
         server-cert: cert.pem
         client-auth: false
         cert: client.pem

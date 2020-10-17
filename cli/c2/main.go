@@ -10,13 +10,13 @@ import (
 	"github.com/hedzr/go-socketlib/tcp/client"
 	"github.com/hedzr/go-socketlib/tcp/server"
 	"github.com/hedzr/log"
-	"github.com/hedzr/logex/logx/logrus"
+	"github.com/hedzr/logex/build"
 )
 
 func main() {
 	if err := cmdr.Exec(buildRootCmd(),
-		cmdr.WithLogx(logrus.New("debug", false, true)),
-		cmdr.WithLogex(cmdr.Level(log.WarnLevel)),
+		// cmdr.WithLogx(logrus.New("debug", false, true)),
+		cmdr.WithLogx(build.New(log.NewLoggerConfigWith(true, "sugar", "debug"))),
 		trace.WithTraceEnable(true),
 
 		//cmdr.WithUnknownOptionHandler(onUnknownOptionHandler),
@@ -51,14 +51,14 @@ func socketLib(root cmdr.OptCmd) {
 
 	tcpCmd := root.NewSubCommand("tcp", "tcp", "socket", "socketlib").
 		Description("go-socketlib TCO operations...", "").
-		Group("TCP")
+		Group("socket-lib")
 
 	server.AttachToCmdr(tcpCmd, server.WithCmdrPort(1983))
 	client.AttachToCmdr(tcpCmd, client.WithCmdrPort(1983), client.WithCmdrInteractiveCommand(true))
 
-	udpCmd := root.NewSubCommand("udp", "udp").
+	udpCmd := root.NewSubCommand("udp", "udp", "UDP", "udplib").
 		Description("go-socketlib UDP operations...", "").
-		Group("UDP")
+		Group("socket-lib")
 
 	server.AttachToCmdr(udpCmd, server.WithCmdrUDPMode(true), server.WithCmdrPort(1984))
 	client.AttachToCmdr(udpCmd, client.WithCmdrUDPMode(true), client.WithCmdrPort(1984))
