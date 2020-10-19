@@ -22,7 +22,7 @@ GOBIN        =  $(GOBASE)/bin
 GOFILES      =  $(wildcard *.go)
 SRCS         =  $(shell git ls-files '*.go')
 PKGS         =  $(shell go list ./...)
-GIT_VERSION  := $(shell git describe --tags --abbrev=0)
+GIT_VERSION  := $(shell git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
 GIT_REVISION := $(shell git rev-parse --short HEAD)
 #GITHASH     =  $(shell git rev-parse HEAD)
 #BUILDTIME   := $(shell date "+%Y%m%d_%H%M%S")
@@ -36,7 +36,7 @@ GOYOLO       =  $(BIN)/yolo
 
 
 # GO111MODULE = on
-GOPROXY     = $(or $(GOPROXY_CUSTOM),https://athens.azurefd.net)
+GOPROXY     = $(or $(GOPROXY_CUSTOM),direct)
 
 # Redirect error output to a file, so we can show it in development mode.
 STDERR      = $(or $(STDERR_CUSTOM),/tmp/.$(PROJECTNAME)-stderr.txt)
@@ -52,7 +52,7 @@ goarch=amd64
 W_PKG=github.com/hedzr/cmdr/conf
 LDFLAGS := -s -w \
 	-X '$(W_PKG).Buildstamp=$(BUILDTIME)' \
-	-X '$(W_PKG).Githash=$(GITREVISION)' \
+	-X '$(W_PKG).Githash=$(GIT_REVISION)' \
 	-X '$(W_PKG).GoVersion=$(GOVERSION)' \
 	-X '$(W_PKG).Version=$(VERSION)'
 # -X '$(W_PKG).AppName=$(APPNAME)'
@@ -175,21 +175,6 @@ build-freebsd:
 build-riscv:
 	@-$(MAKE) -s go-build-task os=linux goarchset=riscv64
 
-go-build-task:
-	@echo "  >  Building $(os)/$(goarchset) binary..."
-	@#echo "  >  LDFLAGS = $(LDFLAGS)"
-	# unsupported GOOS/GOARCH pair nacl/386 ??
-	$(foreach an, $(MAIN_APPS), \
-	  echo "  >  APP NAMEs = appname:$(APPNAME)|projname:$(PROJECTNAME)|an:$(an)"; \
-	  $(foreach goarch, $(goarchset), \
-	    echo "     >> Building (-trimpath) $(GOBIN)/$(an)_$(os)_$(goarch)...$(os)" >/dev/null; \
-	    $(GO) build -ldflags "$(LDFLAGS)" -o $(GOBIN)/$(an)_$(os)_$(goarch) $(GOBASE)/$(MAIN_BUILD_PKG)/$(an); \
-	    chmod +x $(GOBIN)/$(an)_$(os)_$(goarch)*; \
-	    ls -la $(LS_OPT) $(GOBIN)/$(an)_$(os)_$(goarch)*; \
-	) \
-	)
-	#@ls -la $(LS_OPT) $(GOBIN)/*linux*
-
 ## build-ci: run build-ci task. just for CI tools
 build-ci:
 	@echo "  >  Building binaries in CI flow..."
@@ -198,6 +183,22 @@ build-ci:
 	)
 	@echo "  < All Done."
 	@ls -la $(LS_OPT) $(GOBIN)/*
+
+go-build-task:
+	@echo "  >  Building $(os)/$(goarchset) binary..."
+	@#echo "  >  LDFLAGS = $(LDFLAGS)"
+	# unsupported GOOS/GOARCH pair nacl/386 ??
+	$(foreach an, $(MAIN_APPS), \
+	  $(eval ANAME := $(shell if [ "$(an)" == "cli" ]; then echo $(APPNAME); else echo $(an); fi; )) \
+	  echo "  >  APP NAMEs = appname:$(APPNAME)|projname:$(PROJECTNAME)|an:$(an)|ANAME:$(ANAME)"; \
+	  $(foreach goarch, $(goarchset), \
+	    echo "     >> Building (-trimpath) $(GOBIN)/$(ANAME)_$(os)_$(goarch)...$(os)" >/dev/null; \
+	    $(GO) build -ldflags "$(LDFLAGS)" -o $(GOBIN)/$(ANAME)_$(os)_$(goarch) $(GOBASE)/$(MAIN_BUILD_PKG)/$(an); \
+	    chmod +x $(GOBIN)/$(ANAME)_$(os)_$(goarch)*; \
+	    ls -la $(LS_OPT) $(GOBIN)/$(ANAME)_$(os)_$(goarch)*; \
+	) \
+	)
+	#@ls -la $(LS_OPT) $(GOBIN)/*linux*
 
 
 
@@ -223,6 +224,16 @@ clean:
 
 # go-compile: go-clean go-generate go-build
 
+ooo:
+	$(eval ANAME := $(shell for an in $(MAIN_APPS); do \
+		if [[ $$an == cli ]]; then A=$(APPNAME); echo $(APPNAME); \
+		else A=$$an; echo $$an; \
+		fi; \
+	done))
+	@echo "ANAME = $(ANAME), $$ANAME, $$A"
+
+ox: go-clean go-generate
+	$(MAKE) -s go-build
 
 ## run: go run xxx
 run:
@@ -232,11 +243,15 @@ go-build:
 	@echo "  >  Building binary '$(GOBIN)/$(APPNAME)'..."
 	# demo short wget-demo 
 	$(foreach an, $(MAIN_APPS), \
-	  echo "     +race. -trimpath. APPNAME = $(APPNAME)|$(an), LDFLAGS = $(LDFLAGS)"; \
-	  $(GO) build -v -race -ldflags "$(LDFLAGS)" -o $(GOBIN)/$(an) $(GOBASE)/$(MAIN_BUILD_PKG)/$(an); \
-	  ls -la $(LS_OPT) $(GOBIN)/$(an); \
+	  $(eval ANAME := $(shell if [ "$(an)" == "cli" ]; then echo $(APPNAME); else echo $(an); fi; )) \
+	  echo "     +race. -trimpath. APPNAME = $(APPNAME)|$(an) -> $(ANAME), LDFLAGS = $(LDFLAGS)"; \
+	  $(GO) build -v -race -ldflags "$(LDFLAGS)" -o $(GOBIN)/$(ANAME) $(GOBASE)/$(MAIN_BUILD_PKG)/$(an); \
+	  ls -la $(LS_OPT) $(GOBIN)/$(ANAME); \
 	)
 	ls -la $(LS_OPT) $(GOBIN)/
+	$(GO) build -v -race -buildmode=plugin -o ./ci/local/share/fluent/addons/demo.so ./plugin/demo
+	chmod +x ./ci/local/share/fluent/addons/demo.so
+	ls -la $(LS_OPT) ./ci/local/share/fluent/addons/demo.so
 	# go build -o $(GOBIN)/$(APPNAME) $(GOFILES)
 	# chmod +x $(GOBIN)/*
 
@@ -334,7 +349,7 @@ gocov: coverage
 ## coverage: run go coverage test
 coverage: | $(GOBASE)
 	@echo "  >  gocov ..."
-	@$(GO) test ./... -v -race -coverprofile=coverage.txt -covermode=atomic -timeout=20m -test.short | tee coverage.log
+	@$(GO) test . -v -race -coverprofile=coverage.txt -covermode=atomic -timeout=20m -test.short | tee coverage.log
 	@$(GO) tool cover -html=coverage.txt -o cover.html
 	@open cover.html
 
@@ -348,7 +363,7 @@ coverage-full: | $(GOBASE)
 ## codecov: run go test for codecov; (codecov.io)
 codecov: | $(GOBASE)
 	@echo "  >  codecov ..."
-	@$(GO) test -v -race -coverprofile=coverage.txt -covermode=atomic
+	@$(GO) test . -v -race -coverprofile=coverage.txt -covermode=atomic
 	@bash <(curl -s https://codecov.io/bash) -t $(CODECOV_TOKEN)
 
 ## cyclo: run gocyclo tool
@@ -381,6 +396,13 @@ linux-test:
 	@echo "  >  linux-test ..."
 	$(MAKE) -f ./ci/linux_test/Makefile all  2> $(STDERR)
 	@cat $(STDERR) | sed -e '1s/.*/\nError:\n/' 1>&2
+
+
+## docker: docker build
+docker:
+	@echo "  >  docker build ..."
+	docker build --build-arg CN=1 --build-arg GOPROXY="https://gocenter.io,direct" -t cmdr-fluent:latest -t cmdr-fluent:$(VERSION) .
+
 
 ## rshz: rsync to my TP470P
 rshz:

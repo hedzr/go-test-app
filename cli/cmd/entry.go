@@ -7,7 +7,8 @@ import (
 	"github.com/hedzr/cmdr"
 	"github.com/hedzr/cmdr/examples/demo/svr"
 	"github.com/hedzr/cmdr/plugin/daemon"
-	"github.com/hedzr/logex/logx/logrus"
+	"github.com/hedzr/log"
+	"github.com/hedzr/logex/build"
 	"gopkg.in/hedzr/errors.v2"
 	"strings"
 )
@@ -29,7 +30,8 @@ func Entry() {
 		// cmdr.WithBuiltinCommands(false, false, false, false, false),
 		daemon.WithDaemon(svr.NewDaemon(), nil, nil, nil),
 
-		cmdr.WithLogx(logrus.New("debug", false, true)),
+		// cmdr.WithLogx(logrus.New("debug", false, true)),
+		cmdr.WithLogx(build.New(log.NewLoggerConfigWith(true, "logrus", "debug"))),
 
 		//// integrate with logex library
 		//cmdr.WithLogex(cmdr.DebugLevel),
